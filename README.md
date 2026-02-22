@@ -57,6 +57,7 @@ See [TODO.md](./TODO.md) for the development roadmap and phase status.
 - **Unit tests (Vitest):** client `npm run test --workspace=client`; add server tests with `vitest` in the server workspace.
 - **Integration:** run the API and client, then exercise flows (register → create org → view grants → create application → generate proposal → export PDF).
 - **Deployment:** build client (`npm run build`), run server with `NODE_ENV=production` and set `JWT_SECRET` and optional `DATABASE_PATH` / `PORT`. Serve client static files from the API or a reverse proxy.
+  - **Split deployment (client on Vercel/Cloudflare, API elsewhere):** Deploy the Express server (Railway, Render, Fly.io, etc.), then set `VITE_API_URL` to your API base URL when building the client (e.g. `VITE_API_URL=https://api.example.com npm run build --workspace=client`). Without this, auth and API calls will 404. The `client/public/_redirects` and `vercel.json` enable SPA routing on static hosts.
 
 ---
 
