@@ -10,12 +10,14 @@ export default function Dashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1rem' }}>
         <Link
           to="/organizations"
+          className="micro-card micro-link"
           style={{
             padding: '1.5rem',
             borderRadius: 'var(--radius)',
             border: '1px solid var(--color-border)',
             color: 'inherit',
             display: 'block',
+            textDecoration: 'none',
           }}
         >
           <strong>Organisations</strong>
@@ -25,12 +27,14 @@ export default function Dashboard() {
         </Link>
         <Link
           to="/grants"
+          className="micro-card micro-link"
           style={{
             padding: '1.5rem',
             borderRadius: 'var(--radius)',
             border: '1px solid var(--color-border)',
             color: 'inherit',
             display: 'block',
+            textDecoration: 'none',
           }}
         >
           <strong>Grants</strong>
@@ -40,12 +44,14 @@ export default function Dashboard() {
         </Link>
         <Link
           to="/applications"
+          className="micro-card micro-link"
           style={{
             padding: '1.5rem',
             borderRadius: 'var(--radius)',
             border: '1px solid var(--color-border)',
             color: 'inherit',
             display: 'block',
+            textDecoration: 'none',
           }}
         >
           <strong>Applications</strong>

@@ -133,6 +133,7 @@ export default function ApplicationDetail() {
               type="button"
               onClick={generateProposal}
               disabled={generating}
+              className="micro-btn btn-primary-micro"
               style={{
                 padding: '0.5rem 1rem',
                 borderRadius: 'var(--radius)',
@@ -152,6 +153,7 @@ export default function ApplicationDetail() {
               type="button"
               onClick={() => updateStatus(s)}
               disabled={patching || application.status === s}
+              className="micro-btn"
               style={{
                 padding: '0.5rem 1rem',
                 borderRadius: 'var(--radius)',
@@ -183,6 +185,7 @@ export default function ApplicationDetail() {
                       URL.revokeObjectURL(url);
                     });
                 }}
+                className="micro-btn"
                 style={{
                   padding: '0.5rem 1rem',
                   borderRadius: 'var(--radius)',
@@ -211,6 +214,7 @@ export default function ApplicationDetail() {
                       URL.revokeObjectURL(url);
                     });
                 }}
+                className="micro-btn"
                 style={{
                   padding: '0.5rem 1rem',
                   borderRadius: 'var(--radius)',
@@ -291,6 +295,7 @@ export default function ApplicationDetail() {
             type="button"
             onClick={generateProposal}
             disabled={generating}
+            className="micro-btn btn-primary-micro"
             style={{
               padding: '0.5rem 1rem',
               borderRadius: 'var(--radius)',

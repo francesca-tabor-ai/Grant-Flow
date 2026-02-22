@@ -39,6 +39,111 @@ input, textarea, select {
   font-size: 1rem;
 }
 
+/* Page loader */
+.page-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.page-loader-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent-start);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Page transition – fade in on navigation */
+.page-transition-enter {
+  animation: pageFadeIn 0.25s ease-out forwards;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Micro-interactions: interactive elements */
+.micro-link,
+.micro-btn,
+.micro-card {
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.micro-link:hover,
+.micro-btn:hover {
+  opacity: 0.9;
+}
+
+.micro-link:active,
+.micro-btn:active {
+  transform: scale(0.98);
+}
+
+.micro-card {
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.2s ease;
+}
+
+.micro-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.micro-card:active {
+  transform: translateY(0);
+}
+
+/* Nav link micro-interaction */
+.nav-link-micro {
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.nav-link-micro:hover {
+  transform: translateX(2px);
+}
+
+.nav-link-micro:active {
+  transform: translateX(0) scale(0.99);
+}
+
+/* Button micro-interaction (primary CTA) */
+.btn-primary-micro {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-primary-micro:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+}
+
+.btn-primary-micro:active {
+  transform: translateY(0);
+}
+
+/* Input focus ring */
+input:focus,
+textarea:focus,
+select:focus,
+button:focus-visible {
+  outline: 2px solid var(--color-accent-start);
+  outline-offset: 2px;
+}
+
 /* Landing page */
 .landing-gradient-text {
   background: linear-gradient(135deg, var(--color-accent-start), var(--color-accent-end));
@@ -46,14 +151,21 @@ input, textarea, select {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
 .landing-card {
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 2rem;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.2s ease;
 }
+
 .landing-card:hover {
-  box-shadow: 0 12px 24px rgba(0,0,0,0.06);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-3px);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.landing-card:active {
+  transform: translateY(-1px);
 }

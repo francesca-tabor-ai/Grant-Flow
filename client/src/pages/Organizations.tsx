@@ -57,6 +57,7 @@ export default function Organizations() {
         <button
           type="button"
           onClick={() => setShowForm(true)}
+          className="micro-btn"
           style={{
             padding: '0.75rem 1.25rem',
             borderRadius: 'var(--radius)',
@@ -132,10 +133,10 @@ export default function Organizations() {
             }}
           />
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button type="submit" style={{ padding: '0.5rem 1rem', borderRadius: 'var(--radius)', border: 'none', background: 'var(--color-text)', color: 'var(--color-bg)' }}>
+            <button type="submit" className="micro-btn" style={{ padding: '0.5rem 1rem', borderRadius: 'var(--radius)', border: 'none', background: 'var(--color-text)', color: 'var(--color-bg)' }}>
               Create
             </button>
-            <button type="button" onClick={() => setShowForm(false)} style={{ padding: '0.5rem 1rem', borderRadius: 'var(--radius)', border: '1px solid var(--color-border)' }}>
+            <button type="button" onClick={() => setShowForm(false)} className="micro-btn" style={{ padding: '0.5rem 1rem', borderRadius: 'var(--radius)', border: '1px solid var(--color-border)' }}>
               Cancel
             </button>
           </div>
@@ -147,9 +148,10 @@ export default function Organizations() {
       ) : (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {orgs.map((org) => (
-            <li
-              key={org.id}
-              style={{
+<li
+            key={org.id}
+            className="micro-card"
+            style={{
                 padding: '1rem',
                 border: '1px solid var(--color-border)',
                 borderRadius: 'var(--radius)',

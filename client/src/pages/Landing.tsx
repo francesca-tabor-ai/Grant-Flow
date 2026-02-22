@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function Landing() {
   return (
-    <div style={{ minHeight: '100vh', overflow: 'hidden' }}>
+    <div className="page-transition-enter" style={{ minHeight: '100vh', overflow: 'hidden' }}>
       {/* Navbar */}
       <nav
         style={{
@@ -24,6 +24,7 @@ export default function Landing() {
           </div>
           <Link
             to="/login"
+            className="micro-link micro-btn"
             style={{
               padding: '0.5rem 1rem',
               borderRadius: '9999px',
@@ -31,6 +32,7 @@ export default function Landing() {
               color: 'var(--color-accent-start)',
               fontWeight: 600,
               fontSize: '0.875rem',
+              textDecoration: 'none',
             }}
           >
             Log in
@@ -67,6 +69,7 @@ export default function Landing() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
             <Link
               to="/register"
+              className="btn-primary-micro micro-link"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -78,6 +81,7 @@ export default function Landing() {
                 background: 'linear-gradient(135deg, var(--color-accent-start), var(--color-accent-end))',
                 color: '#fff',
                 boxShadow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+                textDecoration: 'none',
               }}
             >
               Get started free
@@ -85,6 +89,7 @@ export default function Landing() {
             </Link>
             <Link
               to="/login"
+              className="micro-link micro-btn"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -94,6 +99,7 @@ export default function Landing() {
                 borderRadius: 9999,
                 border: '1px solid var(--color-border)',
                 color: 'var(--color-text)',
+                textDecoration: 'none',
               }}
             >
               Log in

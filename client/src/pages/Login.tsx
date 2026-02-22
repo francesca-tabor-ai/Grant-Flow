@@ -21,7 +21,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '4rem auto', padding: '0 1rem' }}>
+    <div className="page-transition-enter" style={{ maxWidth: 400, margin: '4rem auto', padding: '0 1rem' }}>
       <h1 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>Sign in</h1>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
         GrantFlow AI — grant management for CICs.
@@ -60,6 +60,7 @@ export default function Login() {
         />
         <button
           type="submit"
+          className="micro-btn"
           style={{
             width: '100%',
             padding: '0.75rem',

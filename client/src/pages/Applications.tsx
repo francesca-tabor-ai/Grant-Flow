@@ -40,6 +40,7 @@ export default function Applications() {
           {apps.map((a) => (
             <li
               key={a.id}
+              className="micro-card"
               style={{
                 padding: '1rem',
                 border: '1px solid var(--color-border)',
@@ -52,7 +53,7 @@ export default function Applications() {
                 gap: '0.5rem',
               }}
             >
-              <Link to={`/applications/${a.id}`} style={{ flex: 1, color: 'inherit', textDecoration: 'none' }}>
+              <Link to={`/applications/${a.id}`} className="micro-link" style={{ flex: 1, color: 'inherit', textDecoration: 'none' }}>
               <div>
                 <strong>{a.grant_title}</strong>
                 {a.funder && <span style={{ color: 'var(--color-text-secondary)', marginLeft: '0.5rem' }}> · {a.funder}</span>}

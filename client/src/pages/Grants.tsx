@@ -88,6 +88,7 @@ export default function Grants() {
           {grants.map((g) => (
             <li
               key={g.id}
+              className="micro-card"
               style={{
                 padding: '1rem',
                 border: '1px solid var(--color-border)',

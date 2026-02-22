@@ -73,6 +73,7 @@ export default function Layout() {
                 <li key={item.path}>
                   <Link
                     to={item.path}
+                    className="nav-link-micro"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -99,6 +100,7 @@ export default function Layout() {
             </div>
             <Link
               to="/grants"
+              className="btn-primary-micro micro-link"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -154,6 +156,7 @@ export default function Layout() {
             <button
               type="button"
               onClick={handleLogout}
+              className="micro-btn"
               style={{
                 width: 32,
                 height: 32,
@@ -173,7 +176,9 @@ export default function Layout() {
       </aside>
 
       <main style={{ flex: 1, overflow: 'auto', padding: '1.5rem 2rem', maxWidth: 1200, margin: 0 }}>
-        <Outlet />
+        <div key={location.pathname} className="page-transition-enter">
+          <Outlet />
+        </div>
       </main>
       <ChatWidget />
     </div>

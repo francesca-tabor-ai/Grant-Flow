@@ -22,7 +22,7 @@ export default function Register() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '4rem auto', padding: '0 1rem' }}>
+    <div className="page-transition-enter" style={{ maxWidth: 400, margin: '4rem auto', padding: '0 1rem' }}>
       <h1 style={{ fontWeight: 700, marginBottom: '0.5rem' }}>Create an account</h1>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
         One profile. Reused across grants and applications.
@@ -77,9 +77,10 @@ export default function Register() {
         <p style={{ marginBottom: '1rem', fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
           At least 8 characters
         </p>
-        <button
-          type="submit"
-          style={{
+<button
+        type="submit"
+        className="micro-btn"
+        style={{
             width: '100%',
             padding: '0.75rem',
             borderRadius: 'var(--radius)',
