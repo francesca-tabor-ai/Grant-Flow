@@ -7,6 +7,8 @@ import ScrollToTop from './components/ScrollToTop';
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const Landing = lazy(() => import('./pages/Landing'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const CaseStudies = lazy(() => import('./pages/CaseStudies'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Organizations = lazy(() => import('./pages/Organizations'));
 const Grants = lazy(() => import('./pages/Grants'));
@@ -38,6 +40,8 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/" element={<RootOrApp />}>
             <Route index element={<Dashboard />} />
             <Route path="organizations" element={<Organizations />} />

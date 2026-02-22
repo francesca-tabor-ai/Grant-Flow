@@ -169,3 +169,36 @@ button:focus-visible {
 .landing-card:active {
   transform: translateY(-1px);
 }
+
+/* Case studies – scrolling logos */
+.logo-scroll-wrapper {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.logo-scroll {
+  display: flex;
+  gap: 1.5rem;
+  animation: logoScroll 30s linear infinite;
+  width: max-content;
+}
+
+.logo-scroll:hover {
+  animation-play-state: paused;
+}
+
+@keyframes logoScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 720px) {
+  .case-study-card {
+    grid-template-columns: 1fr auto !important;
+  }
+}
