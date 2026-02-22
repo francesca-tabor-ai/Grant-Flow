@@ -5,6 +5,11 @@ import { UnauthorizedError, ForbiddenError } from './shared/_core/errors.js';
 import { UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG } from './shared/const.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'grantflow-dev-secret-change-in-production';
+const DEV_SECRET = 'grantflow-dev-secret-change-in-production';
+if (process.env.NODE_ENV === 'production' && JWT_SECRET === DEV_SECRET) {
+  console.error('Fatal: JWT_SECRET must be set to a strong value in production.');
+  process.exit(1);
+}
 
 export type JWTPayload = { userId: string; email: string; role: string };
 

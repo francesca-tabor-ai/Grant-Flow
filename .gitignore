@@ -2,3 +2,30 @@
 .env
 .env.local
 .env.*.local
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+client/dist/
+server/dist/
+*.tsbuildinfo
+
+# Database
+server/data/
+*.db
+
+# IDE / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs and temp
+*.log
+npm-debug.log*
+.pnpm-debug.log*
+tmp/
+temp/

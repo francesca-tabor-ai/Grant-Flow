@@ -1,15 +1,24 @@
 import { Router } from 'express';
+import bcrypt from 'bcrypt';
 import { db } from '../db/index.js';
 import { signToken, authMiddleware } from '../auth.js';
 import { asyncHandler } from '../lib/asyncHandler.js';
 import { BadRequestError, UnauthorizedError } from '../shared/_core/errors.js';
 import { UNAUTHED_ERR_MSG } from '../shared/const.js';
-import crypto from 'crypto';
 
 const router = Router();
+const SALT_ROUNDS = 12;
 
-function hashPassword(password: string): string {
-  return crypto.createHash('sha256').update(password).digest('hex');
+async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, SALT_ROUNDS);
+}
+
+/** Verify password. Supports bcrypt (preferred) and legacy sha256 for migration. */
+async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
+  if (storedHash.startsWith('$2')) return bcrypt.compare(password, storedHash);
+  const crypto = await import('crypto');
+  const legacyHash = crypto.createHash('sha256').update(password).digest('hex');
+  return storedHash === legacyHash;
 }
 
 function trimEmail(value: unknown): string {
@@ -34,8 +43,8 @@ router.post('/register', asyncHandler(async (req, res, next) => {
     next(BadRequestError('Password must be at least 8 characters'));
     return;
   }
-  const id = crypto.randomUUID();
-  const password_hash = hashPassword(password);
+  const id = (await import('crypto')).randomUUID();
+  const password_hash = await hashPassword(password);
   try {
     await db.run(
       'INSERT INTO users (id, email, password_hash, name, role) VALUES ($1, $2, $3, $4, $5)',
@@ -68,7 +77,7 @@ router.post('/login', asyncHandler(async (req, res, next) => {
   )) as
     | { id: string; email: string; password_hash: string; name: string | null; role: string }
     | undefined;
-  if (!row || row.password_hash !== hashPassword(password)) {
+  if (!row || !(await verifyPassword(password, row.password_hash))) {
     next(UnauthorizedError('Invalid email or password'));
     return;
   }

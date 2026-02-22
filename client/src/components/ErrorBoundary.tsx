@@ -61,7 +61,7 @@ class ErrorBoundary extends Component<Props, State> {
                 marginBottom: '1.5rem',
               }}
             >
-              {this.state.error?.message ?? 'Unknown error'}
+              {import.meta.env.PROD ? 'An unexpected error occurred. Please try again.' : (this.state.error?.message ?? 'Unknown error')}
             </pre>
             <button
               type="button"

@@ -8,7 +8,7 @@
 import 'dotenv/config';
 import dotenv from 'dotenv';
 import path from 'path';
-import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,7 +17,7 @@ dotenv.config({ path: path.join(__dirname, '../../.env.local') });
 import { readFileSync, mkdirSync } from 'fs';
 
 function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex');
+  return bcrypt.hashSync(password, 12);
 }
 
 // Fixed IDs for idempotent seed

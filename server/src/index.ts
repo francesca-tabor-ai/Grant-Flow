@@ -10,6 +10,7 @@ dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import { ensureSchema, db } from './db/index.js';
 import { HttpError } from './shared/_core/errors.js';
 import { asyncHandler } from './lib/asyncHandler.js';
@@ -31,6 +32,7 @@ const corsOptions = {
   origin: corsOrigin ? corsOrigin.split(',').map((o) => o.trim()) : true,
   credentials: true,
 };
+app.use(helmet({ contentSecurityPolicy: false })); // CSP can break SPA; disable or configure per deployment
 app.use(cors(corsOptions));
 app.use(express.json());
 
