@@ -10,7 +10,7 @@ dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
 import express, { type RequestHandler } from 'express';
 import cors from 'cors';
-import { ensureSchema } from './db/index.js';
+import { ensureSchema, db } from './db/index.js';
 import { HttpError } from './shared/_core/errors.js';
 import authRoutes from './routes/auth.js';
 import organizationRoutes from './routes/organizations.js';
@@ -49,7 +49,15 @@ app.use('/api', exportRoutes);
 app.use('/api', alertsRoutes);
 app.use('/api', orchestrationRoutes);
 
-app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+app.get('/api/health', async (_req, res) => {
+  try {
+    await db.get('SELECT 1');
+    res.json({ status: 'ok', database: 'connected' });
+  } catch (e) {
+    console.error('Health check DB error:', e);
+    res.status(503).json({ status: 'degraded', database: 'disconnected' });
+  }
+});
 
 /** Handle HttpError from shared; send status + JSON body. Must be after routes. */
 app.use((err: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
