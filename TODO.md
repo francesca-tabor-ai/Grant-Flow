@@ -13,8 +13,12 @@
 - [x] Impact metrics and programmes tracking
 - [x] Knowledge base for reusable organization data
 
-## Phase 3: (Next)
-_Add Phase 3 tasks here as you define them._
+## Phase 3: Grant Discovery & Eligibility
+- [x] Grant discovery agent integration (mock/API)
+- [x] Grant database schema and storage
+- [ ] Eligibility analysis agent
+- [ ] Grant matching algorithm based on CIC profile
+- [x] Grant list UI with filtering and sorting
 
 ---
 _Last updated: Feb 22, 2025_
