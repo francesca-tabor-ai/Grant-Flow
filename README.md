@@ -61,32 +61,6 @@ See [TODO.md](./TODO.md) for the development roadmap and phase status.
 
 ---
 
-## Design system
-
-GrantFlow’s visual language is calm, confident, and developer-first. The goal is invisible infrastructure: the product is the hero, not the branding.
-
-### Typography
-
-- **Typeface:** Humanist sans-serif. Very high legibility at all sizes; soft curves and precise geometry so it feels technical but friendly. Works for both marketing headlines and dense dashboards.
-- **Headlines:** Large, bold, confident. Prefer sentence-case.
-- **Body:** Regular or light weights, generous line height.
-- **UI and numbers:** Clear, neutral, optimised for data readability.
-
-*Overall vibe: We’re serious, but not intimidating.*
-
-### Colour
-
-- **Core palette:** Black / near-black for primary text; white as the dominant background; cool greys for UI structure, dividers, and secondary text.
-- **Accent:** A signature multi-colour gradient (purples, blues, pinks, oranges). Used sparingly—hero sections, illustrations, highlights. Accents guide attention; they don’t overwhelm content.
-- **Effect:** Trustworthy and clean (finance); modern and creative (tech). Instantly recognizable even without a logo.
-
-### Brand and layout
-
-- **Personality:** Developer-first. Calm, confident, quietly powerful.
-- **Layout:** Lots of white space; strong typographic hierarchy; rounded UI components; subtle motion and depth.
-- **Imagery:** Realistic product mockups as the hero. Neutral partner logos (monochrome). Illustrations that feel technical, modular, and abstract.
-
----
 
 *GrantFlow AI—smarter grant management for organisations that exist to make a difference.*
 
