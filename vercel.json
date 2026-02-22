@@ -3,6 +3,5 @@
   "outputDirectory": "dist",
   "framework": null,
   "installCommand": "npm install",
-  "rootDirectory": "client",
-  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
+  "rewrites": [{"source": "/((?!api/).*)", "destination": "/index.html"}]
 }
