@@ -92,10 +92,10 @@ export async function ensureSchema(): Promise<void> {
   if (process.env.DATABASE_URL) {
     const statements = schema
       .split(';')
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0 && !s.startsWith('--'));
+      .map((s) => s.replace(/--[^\n]*/g, '').trim())
+      .filter((s) => s.length > 0);
     for (const stmt of statements) {
-      if (stmt) await adapter.exec(stmt + ';');
+      await adapter.exec(stmt + ';');
     }
   } else {
     await adapter.exec(schema);
