@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getToken } from '../lib/api';
+import { apiFetch } from '../lib/api';
 
 type Org = { id: string; name: string; mission: string | null; sector: string | null; location: string | null };
 
@@ -14,7 +14,7 @@ export default function Organizations() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/organizations', { headers: { Authorization: `Bearer ${getToken()}` } })
+    apiFetch('/api/organizations')
       .then((r) => r.json())
       .then((data) => setOrgs(Array.isArray(data) ? data : []))
       .catch(() => setOrgs([]))
@@ -25,9 +25,9 @@ export default function Organizations() {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('/api/organizations', {
+      const res = await apiFetch('/api/organizations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, mission: mission || null, sector: sector || null, location: location || null }),
       });
       if (!res.ok) throw new Error((await res.json()).error || 'Failed to create');

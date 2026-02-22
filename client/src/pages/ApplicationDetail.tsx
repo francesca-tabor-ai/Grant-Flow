@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { apiFetch, getToken } from '../lib/api';
+import { apiFetch } from '../lib/api';
 
 type ApplicationDetailData = {
   id: string;
@@ -171,10 +171,7 @@ export default function ApplicationDetail() {
               <button
                 type="button"
                 onClick={() => {
-                  const t = getToken();
-                  const h = new Headers();
-                  if (t) h.set('Authorization', `Bearer ${t}`);
-                  fetch(`/api/applications/${id}/export/pdf`, { headers: h })
+                  apiFetch(`/api/applications/${id}/export/pdf`)
                     .then((r) => r.blob())
                     .then((blob) => {
                       const url = URL.createObjectURL(blob);
@@ -200,10 +197,7 @@ export default function ApplicationDetail() {
               <button
                 type="button"
                 onClick={() => {
-                  const t = getToken();
-                  const h = new Headers();
-                  if (t) h.set('Authorization', `Bearer ${t}`);
-                  fetch(`/api/applications/${id}/export/docx`, { headers: h })
+                  apiFetch(`/api/applications/${id}/export/docx`)
                     .then((r) => r.blob())
                     .then((blob) => {
                       const url = URL.createObjectURL(blob);
