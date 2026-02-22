@@ -90,4 +90,4 @@ GrantFlow’s visual language is calm, confident, and developer-first. The goal 
 
 *GrantFlow AI—smarter grant management for organisations that exist to make a difference.*
 
-<!-- redeploy 2025-02-22 -->
+<!-- redeploy 2025-02-23 -->
