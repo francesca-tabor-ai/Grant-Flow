@@ -27,8 +27,12 @@
 - [ ] Proposal editing and review interface
 - [ ] Version history for proposals
 
-## Phase 5: (Next)
-_Add Phase 5 tasks here as you define them._
+## Phase 5: Budget & Document Assembly
+- [ ] Budget generation agent
+- [ ] Budget template system
+- [ ] Cost justification generation
+- [ ] Document assembly orchestration
+- [ ] PDF/Word export functionality
 
 ---
 _Last updated: Feb 22, 2025_
