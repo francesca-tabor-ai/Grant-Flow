@@ -64,14 +64,19 @@ export default function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          minLength={8}
+          title="At least 8 characters"
           style={{
             width: '100%',
             padding: '0.75rem',
             borderRadius: 'var(--radius)',
             border: '1px solid var(--color-border)',
-            marginBottom: '1rem',
+            marginBottom: '0.25rem',
           }}
         />
+        <p style={{ marginBottom: '1rem', fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+          At least 8 characters
+        </p>
         <button
           type="submit"
           style={{

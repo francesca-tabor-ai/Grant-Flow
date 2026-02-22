@@ -1,5 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
+import ChatWidget from './ChatWidget';
 
 const navItems = [
   { path: '/', label: 'Dashboard' },
@@ -174,6 +175,7 @@ export default function Layout() {
       <main style={{ flex: 1, overflow: 'auto', padding: '1.5rem 2rem', maxWidth: 1200, margin: 0 }}>
         <Outlet />
       </main>
+      <ChatWidget />
     </div>
   );
 }

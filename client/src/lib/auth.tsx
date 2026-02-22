@@ -2,6 +2,26 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type User = { id: string; email: string; name: string | null; role: string } | null;
 
+const API_BASE = (import.meta as ImportMeta & { env?: { VITE_API_URL?: string } }).env?.VITE_API_URL ?? '';
+
+function authFetch(path: string, init?: RequestInit): Promise<Response> {
+  const headers = new Headers(init?.headers);
+  if (init?.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  return fetch(`${API_BASE}${path}`, { ...init, headers, credentials: 'include' });
+}
+
+async function parseErrorResponse(res: Response): Promise<string> {
+  const text = await res.text();
+  try {
+    const json = JSON.parse(text) as { error?: string };
+    if (typeof json?.error === 'string') return json.error;
+  } catch {
+    /* ignore */
+  }
+  if (res.status === 0 || text === '') return 'Network error. Check the server and try again.';
+  return text.slice(0, 200) || `Request failed (${res.status})`;
+}
+
 const AuthContext = createContext<{
   user: User;
   loading: boolean;
@@ -21,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       return;
     }
-    fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+    authFetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => (r.ok ? r.json() : null))
       .then((u) => setUser(u?.user ?? null))
       .catch(() => setUser(null))
@@ -29,14 +49,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [token]);
 
   const login = async (email: string, password: string) => {
-    const res = await fetch('/api/auth/login', {
+    const res = await authFetch('/api/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Login failed');
+      const msg = await parseErrorResponse(res);
+      throw new Error(msg || 'Login failed');
     }
     const data = await res.json();
     localStorage.setItem('grantflow_token', data.token);
@@ -44,14 +63,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (email: string, password: string, name?: string) => {
-    const res = await fetch('/api/auth/register', {
+    const res = await authFetch('/api/auth/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, name }),
     });
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Registration failed');
+      const msg = await parseErrorResponse(res);
+      throw new Error(msg || 'Registration failed');
     }
     const data = await res.json();
     localStorage.setItem('grantflow_token', data.token);

@@ -8,10 +8,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '../.env') });
 dotenv.config({ path: path.join(process.cwd(), '.env.local') });
 
-import express, { type RequestHandler } from 'express';
+import express from 'express';
 import cors from 'cors';
 import { ensureSchema, db } from './db/index.js';
 import { HttpError } from './shared/_core/errors.js';
+import { asyncHandler } from './lib/asyncHandler.js';
 import authRoutes from './routes/auth.js';
 import organizationRoutes from './routes/organizations.js';
 import grantsRoutes from './routes/grants.js';
@@ -21,6 +22,7 @@ import budgetsRoutes from './routes/budgets.js';
 import exportRoutes from './routes/export.js';
 import alertsRoutes from './routes/alerts.js';
 import orchestrationRoutes from './routes/orchestration.js';
+import chatRoutes from './routes/chat.js';
 
 const app = express();
 // In production, set CORS_ORIGIN to a comma-separated list of allowed origins, or leave unset to allow same-origin only
@@ -32,13 +34,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-/** Wrap async route handlers so thrown errors are passed to error middleware */
-export function asyncHandler(fn: RequestHandler): RequestHandler {
-  return (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-}
-
 app.use('/api/auth', authRoutes);
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/grants', grantsRoutes);
@@ -48,6 +43,7 @@ app.use('/api', budgetsRoutes);
 app.use('/api', exportRoutes);
 app.use('/api', alertsRoutes);
 app.use('/api', orchestrationRoutes);
+app.use('/api', chatRoutes);
 
 app.get('/api/health', async (_req, res) => {
   try {
