@@ -10,13 +10,6 @@ import Grants from './pages/Grants';
 import Applications from './pages/Applications';
 import ApplicationDetail from './pages/ApplicationDetail';
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading…</div>;
-  if (!user) return <Navigate to="/login" replace />;
-  return <>{children}</>;
-}
-
 /** Root path: show Landing when not logged in, otherwise the app layout. */
 function RootOrApp() {
   const { user, loading } = useAuth();

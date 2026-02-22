@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import Layout from './Layout';
 
 vi.mock('../lib/auth', () => ({
@@ -30,6 +30,6 @@ describe('Layout', () => {
       </MemoryRouter>
     );
     expect(screen.getByText('test@example.com')).toBeInTheDocument();
-    expect(screen.getByText('Log out')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Out' })).toBeInTheDocument();
   });
 });
