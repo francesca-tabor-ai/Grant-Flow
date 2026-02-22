@@ -12,15 +12,17 @@ export type GrantMatch = {
   rankScore: number;
 };
 
-export function getMatchesForOrganization(organizationId: string, limit = 50): GrantMatch[] {
-  const orgRow = db.prepare(
-    'SELECT sector, location, mission FROM organizations WHERE id = ?'
-  ).get(organizationId) as { sector: string | null; location: string | null; mission: string | null } | undefined;
+export async function getMatchesForOrganization(organizationId: string, limit = 50): Promise<GrantMatch[]> {
+  const orgRow = (await db.get(
+    'SELECT sector, location, mission FROM organizations WHERE id = $1',
+    [organizationId]
+  )) as { sector: string | null; location: string | null; mission: string | null } | undefined;
   if (!orgRow) return [];
 
-  const financial = db.prepare(
-    'SELECT annual_turnover FROM organization_financials WHERE organization_id = ?'
-  ).get(organizationId) as { annual_turnover: number | null } | undefined;
+  const financial = (await db.get(
+    'SELECT annual_turnover FROM organization_financials WHERE organization_id = $1',
+    [organizationId]
+  )) as { annual_turnover: number | null } | undefined;
 
   const org: OrgProfile = {
     sector: orgRow.sector,
@@ -29,9 +31,9 @@ export function getMatchesForOrganization(organizationId: string, limit = 50): G
     annualTurnover: financial?.annual_turnover ?? null,
   };
 
-  const grants = db.prepare(
+  const grants = (await db.all(
     'SELECT id, title, description, funder, amount_min, amount_max, eligibility_json, requirements_json FROM grants'
-  ).all() as GrantProfile[];
+  )) as GrantProfile[];
 
   const matches: GrantMatch[] = grants.map((grant) => {
     const eligibility = analyseEligibility(org, grant);

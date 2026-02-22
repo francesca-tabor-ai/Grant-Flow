@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { db } from '../db/index.js';
 import { signToken, authMiddleware } from '../auth.js';
-import { BadRequestError, UnauthorizedError } from '../../shared/_core/errors.js';
-import { UNAUTHED_ERR_MSG } from '../../shared/const.js';
+import { BadRequestError, UnauthorizedError } from '../shared/_core/errors.js';
+import { UNAUTHED_ERR_MSG } from '../shared/const.js';
 import crypto from 'crypto';
 
 const router = Router();
@@ -11,7 +11,7 @@ function hashPassword(password: string): string {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
-router.post('/register', (req, res, next) => {
+router.post('/register', async (req, res, next) => {
   const { email, password, name } = req.body ?? {};
   if (!email || !password) {
     next(BadRequestError('Email and password required'));
@@ -20,13 +20,15 @@ router.post('/register', (req, res, next) => {
   const id = crypto.randomUUID();
   const password_hash = hashPassword(password);
   try {
-    db.prepare(
-      'INSERT INTO users (id, email, password_hash, name, role) VALUES (?, ?, ?, ?, ?)'
-    ).run(id, email, password_hash, name ?? null, 'user');
+    await db.run(
+      'INSERT INTO users (id, email, password_hash, name, role) VALUES ($1, $2, $3, $4, $5)',
+      [id, email, password_hash, name ?? null, 'user']
+    );
     const token = signToken({ userId: id, email, role: 'user' });
     res.status(201).json({ token, user: { id, email, name: name ?? null, role: 'user' } });
   } catch (e: unknown) {
-    if (e && typeof e === 'object' && 'code' in e && e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+    const err = e as { code?: string };
+    if (err?.code === 'SQLITE_CONSTRAINT_UNIQUE' || err?.code === '23505') {
       res.status(409).json({ error: 'Email already registered' });
       return;
     }
@@ -34,13 +36,16 @@ router.post('/register', (req, res, next) => {
   }
 });
 
-router.post('/login', (req, res, next) => {
+router.post('/login', async (req, res, next) => {
   const { email, password } = req.body ?? {};
   if (!email || !password) {
     next(BadRequestError('Email and password required'));
     return;
   }
-  const row = db.prepare('SELECT id, email, password_hash, name, role FROM users WHERE email = ?').get(email) as
+  const row = (await db.get(
+    'SELECT id, email, password_hash, name, role FROM users WHERE email = $1',
+    [email]
+  )) as
     | { id: string; email: string; password_hash: string; name: string | null; role: string }
     | undefined;
   if (!row || row.password_hash !== hashPassword(password)) {
@@ -51,9 +56,11 @@ router.post('/login', (req, res, next) => {
   res.json({ token, user: { id: row.id, email: row.email, name: row.name, role: row.role } });
 });
 
-router.get('/me', authMiddleware, (req, res, next) => {
-  const user = (req as { user: { userId: string } }).user;
-  const row = db.prepare('SELECT id, email, name, role FROM users WHERE id = ?').get(user.userId) as
+router.get('/me', authMiddleware, async (req, res, next) => {
+  const user = req.user!;
+  const row = (await db.get('SELECT id, email, name, role FROM users WHERE id = $1', [
+    user.userId,
+  ])) as
     | { id: string; email: string; name: string | null; role: string }
     | undefined;
   if (!row) {

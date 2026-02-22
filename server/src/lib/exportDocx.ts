@@ -4,13 +4,15 @@
 
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 
+type ParagraphInstance = InstanceType<typeof Paragraph>;
+
 function stripMarkdown(s: string): string {
   return s.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1').trim();
 }
 
-function contentToParagraphs(content: string): Paragraph[] {
+function contentToParagraphs(content: string): ParagraphInstance[] {
   const lines = content.split(/\n+/);
-  const paragraphs: Paragraph[] = [];
+  const paragraphs: ParagraphInstance[] = [];
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed) continue;

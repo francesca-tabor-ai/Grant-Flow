@@ -14,7 +14,8 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "pdfkit": "^0.15.0",
-    "docx": "^9.5.0"
+    "docx": "^9.5.0",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.11",
@@ -23,6 +24,7 @@
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.9.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "@types/pg": "^8.11.10"
   }
 }

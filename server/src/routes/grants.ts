@@ -8,17 +8,18 @@ import type { GrantProfile } from '../agents/eligibility.js';
 const router = Router();
 router.use(optionalAuth);
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const { q, funder, sort = 'created_at', order = 'desc', organization_id } = req.query as Record<string, string>;
-  const user = (req as { user?: { userId: string } }).user;
+  const user = req.user!;
 
   let rows: Array<Record<string, unknown>>;
   if (organization_id && user) {
-    const canAccess = db.prepare(
-      'SELECT 1 FROM user_organizations WHERE user_id = ? AND organization_id = ?'
-    ).get(user.userId, organization_id);
+    const canAccess = await db.get(
+      'SELECT 1 FROM user_organizations WHERE user_id = $1 AND organization_id = $2',
+      [user.userId, organization_id]
+    );
     if (canAccess) {
-      const matches = getMatchesForOrganization(organization_id);
+      const matches = await getMatchesForOrganization(organization_id);
       rows = matches.map((m) => ({
         ...m.grant,
         eligibility_score: m.eligibility.score,
@@ -58,25 +59,25 @@ router.get('/', (req, res) => {
     let sql = 'SELECT * FROM grants WHERE 1=1';
     const params: unknown[] = [];
     if (q) {
-      sql += ' AND (title LIKE ? OR description LIKE ? OR funder LIKE ?)';
+      sql += ' AND (title LIKE $' + (params.length + 1) + ' OR description LIKE $' + (params.length + 2) + ' OR funder LIKE $' + (params.length + 3) + ')';
       const like = `%${q}%`;
       params.push(like, like, like);
     }
     if (funder) {
-      sql += ' AND funder LIKE ?';
+      sql += ' AND funder LIKE $' + (params.length + 1);
       params.push(`%${funder}%`);
     }
     const allowedSort = ['created_at', 'deadline', 'title', 'amount_max'];
     const sortCol = allowedSort.includes(sort) ? sort : 'created_at';
     const dir = order === 'asc' ? 'ASC' : 'DESC';
     sql += ` ORDER BY ${sortCol} ${dir}`;
-    rows = db.prepare(sql).all(...params) as Array<Record<string, unknown>>;
+    rows = (await db.all(sql, params)) as Array<Record<string, unknown>>;
   }
   res.json(rows);
 });
 
-router.get('/:id', (req, res) => {
-  const row = db.prepare('SELECT * FROM grants WHERE id = ?').get(req.params.id) as Record<string, unknown> | undefined;
+router.get('/:id', async (req, res) => {
+  const row = (await db.get('SELECT * FROM grants WHERE id = $1', [req.params.id])) as Record<string, unknown> | undefined;
   if (!row) {
     res.status(404).json({ error: 'Grant not found' });
     return;
@@ -84,33 +85,37 @@ router.get('/:id', (req, res) => {
   res.json(row);
 });
 
-router.get('/:id/eligibility', authMiddleware, (req, res) => {
+router.get('/:id/eligibility', authMiddleware, async (req, res) => {
   const { organization_id } = req.query as { organization_id?: string };
-  const user = (req as { user: { userId: string } }).user;
+  const user = req.user!;
   if (!organization_id) {
     res.status(400).json({ error: 'organization_id required' });
     return;
   }
-  const canAccess = db.prepare(
-    'SELECT 1 FROM user_organizations WHERE user_id = ? AND organization_id = ?'
-  ).get(user.userId, organization_id);
+  const canAccess = await db.get(
+    'SELECT 1 FROM user_organizations WHERE user_id = $1 AND organization_id = $2',
+    [user.userId, organization_id]
+  );
   if (!canAccess) {
     res.status(403).json({ error: 'Not allowed for this organisation' });
     return;
   }
-  const grant = db.prepare(
-    'SELECT id, title, description, funder, amount_min, amount_max, eligibility_json, requirements_json FROM grants WHERE id = ?'
-  ).get(req.params.id) as GrantProfile | undefined;
+  const grant = (await db.get(
+    'SELECT id, title, description, funder, amount_min, amount_max, eligibility_json, requirements_json FROM grants WHERE id = $1',
+    [req.params.id]
+  )) as GrantProfile | undefined;
   if (!grant) {
     res.status(404).json({ error: 'Grant not found' });
     return;
   }
-  const orgRow = db.prepare(
-    'SELECT sector, location, mission FROM organizations WHERE id = ?'
-  ).get(organization_id) as { sector: string | null; location: string | null; mission: string | null } | undefined;
-  const financial = db.prepare(
-    'SELECT annual_turnover FROM organization_financials WHERE organization_id = ?'
-  ).get(organization_id) as { annual_turnover: number | null } | undefined;
+  const orgRow = (await db.get(
+    'SELECT sector, location, mission FROM organizations WHERE id = $1',
+    [organization_id]
+  )) as { sector: string | null; location: string | null; mission: string | null } | undefined;
+  const financial = (await db.get(
+    'SELECT annual_turnover FROM organization_financials WHERE organization_id = $1',
+    [organization_id]
+  )) as { annual_turnover: number | null } | undefined;
   const org = {
     sector: orgRow?.sector ?? null,
     location: orgRow?.location ?? null,

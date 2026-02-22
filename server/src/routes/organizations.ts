@@ -6,40 +6,44 @@ import crypto from 'crypto';
 const router = Router();
 router.use(authMiddleware);
 
-router.get('/', (req, res) => {
-  const user = (req as { user: { userId: string } }).user;
-  const rows = db.prepare(
+router.get('/', async (req, res) => {
+  const user = req.user!;
+  const rows = (await db.all(
     `SELECT o.* FROM organizations o
      JOIN user_organizations uo ON uo.organization_id = o.id
-     WHERE uo.user_id = ?`
-  ).all(user.userId) as Array<Record<string, unknown>>;
+     WHERE uo.user_id = $1`,
+    [user.userId]
+  )) as Array<Record<string, unknown>>;
   res.json(rows);
 });
 
-router.post('/', (req, res) => {
-  const user = (req as { user: { userId: string } }).user;
+router.post('/', async (req, res) => {
+  const user = req.user!;
   const { name, mission, sector, location } = req.body ?? {};
   if (!name) {
     res.status(400).json({ error: 'Organization name required' });
     return;
   }
   const id = crypto.randomUUID();
-  db.prepare(
-    'INSERT INTO organizations (id, name, mission, sector, location) VALUES (?, ?, ?, ?, ?)'
-  ).run(id, name, mission ?? null, sector ?? null, location ?? null);
-  db.prepare(
-    'INSERT INTO user_organizations (user_id, organization_id, role) VALUES (?, ?, ?)'
-  ).run(user.userId, id, 'admin');
+  await db.run(
+    'INSERT INTO organizations (id, name, mission, sector, location) VALUES ($1, $2, $3, $4, $5)',
+    [id, name, mission ?? null, sector ?? null, location ?? null]
+  );
+  await db.run(
+    'INSERT INTO user_organizations (user_id, organization_id, role) VALUES ($1, $2, $3)',
+    [user.userId, id, 'admin']
+  );
   res.status(201).json({ id, name, mission, sector, location });
 });
 
-router.get('/:id', (req, res) => {
-  const user = (req as { user: { userId: string } }).user;
-  const row = db.prepare(
+router.get('/:id', async (req, res) => {
+  const user = req.user!;
+  const row = (await db.get(
     `SELECT o.* FROM organizations o
      JOIN user_organizations uo ON uo.organization_id = o.id
-     WHERE o.id = ? AND uo.user_id = ?`
-  ).get(req.params.id, user.userId) as Record<string, unknown> | undefined;
+     WHERE o.id = $1 AND uo.user_id = $2`,
+    [req.params.id, user.userId]
+  )) as Record<string, unknown> | undefined;
   if (!row) {
     res.status(404).json({ error: 'Organization not found' });
     return;
@@ -47,11 +51,12 @@ router.get('/:id', (req, res) => {
   res.json(row);
 });
 
-router.patch('/:id', (req, res) => {
-  const user = (req as { user: { userId: string } }).user;
-  const exists = db.prepare(
-    `SELECT 1 FROM user_organizations WHERE organization_id = ? AND user_id = ?`
-  ).get(req.params.id, user.userId);
+router.patch('/:id', async (req, res) => {
+  const user = req.user!;
+  const exists = await db.get(
+    'SELECT 1 FROM user_organizations WHERE organization_id = $1 AND user_id = $2',
+    [req.params.id, user.userId]
+  );
   if (!exists) {
     res.status(404).json({ error: 'Organization not found' });
     return;
@@ -59,19 +64,35 @@ router.patch('/:id', (req, res) => {
   const { name, mission, sector, location } = req.body ?? {};
   const updates: string[] = [];
   const values: unknown[] = [];
-  if (name !== undefined) { updates.push('name = ?'); values.push(name); }
-  if (mission !== undefined) { updates.push('mission = ?'); values.push(mission); }
-  if (sector !== undefined) { updates.push('sector = ?'); values.push(sector); }
-  if (location !== undefined) { updates.push('location = ?'); values.push(location); }
+  if (name !== undefined) {
+    updates.push('name = $' + (values.length + 1));
+    values.push(name);
+  }
+  if (mission !== undefined) {
+    updates.push('mission = $' + (values.length + 1));
+    values.push(mission);
+  }
+  if (sector !== undefined) {
+    updates.push('sector = $' + (values.length + 1));
+    values.push(sector);
+  }
+  if (location !== undefined) {
+    updates.push('location = $' + (values.length + 1));
+    values.push(location);
+  }
   if (updates.length === 0) {
-    const row = db.prepare('SELECT * FROM organizations WHERE id = ?').get(req.params.id);
+    const row = await db.get('SELECT * FROM organizations WHERE id = $1', [req.params.id]);
     res.json(row);
     return;
   }
-  updates.push("updated_at = datetime('now')");
+  updates.push('updated_at = CURRENT_TIMESTAMP');
+  const whereId = values.length + 1;
   values.push(req.params.id);
-  db.prepare(`UPDATE organizations SET ${updates.join(', ')} WHERE id = ?`).run(...values);
-  const row = db.prepare('SELECT * FROM organizations WHERE id = ?').get(req.params.id);
+  await db.run(
+    `UPDATE organizations SET ${updates.join(', ')} WHERE id = $${whereId}`,
+    values
+  );
+  const row = await db.get('SELECT * FROM organizations WHERE id = $1', [req.params.id]);
   res.json(row);
 });
 

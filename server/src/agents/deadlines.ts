@@ -16,15 +16,16 @@ export type DeadlineAlert = {
 
 const DUE_SOON_DAYS = 14;
 
-export function getDeadlineAlerts(userId: string): DeadlineAlert[] {
-  const rows = db.prepare(
+export async function getDeadlineAlerts(userId: string): Promise<DeadlineAlert[]> {
+  const rows = (await db.all(
     `SELECT a.id AS application_id, a.status, a.deadline, g.title AS grant_title
      FROM applications a
      JOIN grants g ON g.id = a.grant_id
      JOIN user_organizations uo ON uo.organization_id = a.organization_id
-     WHERE uo.user_id = ? AND a.status NOT IN ('submitted')
-     ORDER BY a.deadline IS NULL, a.deadline ASC`
-  ).all(userId) as Array<{ application_id: string; status: string; deadline: string | null; grant_title: string }>;
+     WHERE uo.user_id = $1 AND a.status NOT IN ('submitted')
+     ORDER BY a.deadline IS NULL, a.deadline ASC`,
+    [userId]
+  )) as Array<{ application_id: string; status: string; deadline: string | null; grant_title: string }>;
 
   const now = new Date();
   now.setHours(0, 0, 0, 0);

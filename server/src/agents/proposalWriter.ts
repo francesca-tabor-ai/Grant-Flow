@@ -11,13 +11,15 @@ export type ProposalDraft = {
   sections: Array<{ heading: string; text: string }>;
 };
 
-export function generateProposalDraft(organizationId: string, grantId: string): ProposalDraft {
-  const org = db.prepare(
-    'SELECT name, mission, sector, location FROM organizations WHERE id = ?'
-  ).get(organizationId) as { name: string; mission: string | null; sector: string | null; location: string | null } | undefined;
-  const grant = db.prepare(
-    'SELECT title, description, funder, requirements_json FROM grants WHERE id = ?'
-  ).get(grantId) as { title: string; description: string | null; funder: string | null; requirements_json: string | null } | undefined;
+export async function generateProposalDraft(organizationId: string, grantId: string): Promise<ProposalDraft> {
+  const org = (await db.get(
+    'SELECT name, mission, sector, location FROM organizations WHERE id = $1',
+    [organizationId]
+  )) as { name: string; mission: string | null; sector: string | null; location: string | null } | undefined;
+  const grant = (await db.get(
+    'SELECT title, description, funder, requirements_json FROM grants WHERE id = $1',
+    [grantId]
+  )) as { title: string; description: string | null; funder: string | null; requirements_json: string | null } | undefined;
 
   if (!org || !grant) {
     throw new Error('Organization or grant not found');

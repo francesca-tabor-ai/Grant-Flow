@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { db } from './db/index.js';
-import { UnauthorizedError, ForbiddenError } from '../shared/_core/errors.js';
-import { UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG } from '../shared/const.js';
+import { UnauthorizedError, ForbiddenError } from './shared/_core/errors.js';
+import { UNAUTHED_ERR_MSG, NOT_ADMIN_ERR_MSG } from './shared/const.js';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'grantflow-dev-secret-change-in-production';
 
@@ -33,7 +33,7 @@ export function authMiddleware(req: Request, _res: Response, next: NextFunction)
     next(UnauthorizedError(UNAUTHED_ERR_MSG));
     return;
   }
-  (req as Request & { user: JWTPayload }).user = payload;
+  req.user = payload;
   next();
 }
 
@@ -42,19 +42,19 @@ export function optionalAuth(req: Request, _res: Response, next: NextFunction): 
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
   if (token) {
     const payload = verifyToken(token);
-    if (payload) (req as Request & { user?: JWTPayload }).user = payload;
+    if (payload) req.user = payload;
   }
   next();
 }
 
 export function requireRole(...roles: string[]) {
   return (req: Request, _res: Response, next: NextFunction): void => {
-    const user = (req as Request & { user?: JWTPayload }).user;
+    const user = req.user;
     if (!user) {
       next(UnauthorizedError(UNAUTHED_ERR_MSG));
       return;
     }
-    if (!roles.includes(user.role)) {
+    if (!user.role || !roles.includes(user.role)) {
       next(ForbiddenError(NOT_ADMIN_ERR_MSG));
       return;
     }
