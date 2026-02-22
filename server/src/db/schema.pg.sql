@@ -132,6 +132,15 @@ CREATE TABLE IF NOT EXISTS budgets (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- User grant favorites (save for later)
+CREATE TABLE IF NOT EXISTS user_grant_favorites (
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  grant_id TEXT NOT NULL REFERENCES grants(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, grant_id)
+);
+CREATE INDEX IF NOT EXISTS idx_user_grant_favorites_user ON user_grant_favorites(user_id);
+
 CREATE INDEX IF NOT EXISTS idx_applications_org ON applications(organization_id);
 CREATE INDEX IF NOT EXISTS idx_applications_grant ON applications(grant_id);
 CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);

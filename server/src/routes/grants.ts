@@ -8,6 +8,44 @@ import type { GrantProfile } from '../agents/eligibility.js';
 const router = Router();
 router.use(optionalAuth);
 
+// Favorites (must be before /:id to avoid "favorites" matching as id)
+router.get('/favorites', authMiddleware, async (req, res) => {
+  const user = req.user!;
+  const rows = (await db.all(
+    `SELECT g.id, g.title, g.description, g.funder, g.amount_min, g.amount_max, g.deadline
+     FROM user_grant_favorites u JOIN grants g ON u.grant_id = g.id
+     WHERE u.user_id = $1 ORDER BY u.created_at DESC`,
+    [user.userId]
+  )) as Array<Record<string, unknown>>;
+  res.json(rows);
+});
+
+router.post('/:id/favorite', authMiddleware, async (req, res) => {
+  const user = req.user!;
+  const grantId = req.params.id;
+  const exists = await db.get('SELECT id FROM grants WHERE id = $1', [grantId]);
+  if (!exists) {
+    res.status(404).json({ error: 'Grant not found' });
+    return;
+  }
+  await db.run(
+    'INSERT INTO user_grant_favorites (user_id, grant_id) VALUES ($1, $2) ON CONFLICT (user_id, grant_id) DO NOTHING',
+    [user.userId, grantId]
+  );
+  res.status(201).json({ favorited: true });
+});
+
+router.delete('/:id/favorite', authMiddleware, async (req, res) => {
+  const user = req.user!;
+  const grantId = req.params.id;
+  const r = await db.run(
+    'DELETE FROM user_grant_favorites WHERE user_id = $1 AND grant_id = $2',
+    [user.userId, grantId]
+  );
+  const changes = (r as { changes?: number }).changes ?? 0;
+  res.json({ favorited: false, removed: changes > 0 });
+});
+
 router.get('/', async (req, res) => {
   const { q, funder, sort = 'created_at', order = 'desc', organization_id } = req.query as Record<string, string>;
   const user = req.user!;

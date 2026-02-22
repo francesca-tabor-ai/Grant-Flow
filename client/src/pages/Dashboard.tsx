@@ -11,6 +11,14 @@ type DeadlineAlert = {
   alert: 'overdue' | 'due_soon' | 'ok';
 };
 
+type SavedGrant = {
+  id: string;
+  title: string;
+  funder: string | null;
+  amount_max: number | null;
+  deadline: string | null;
+};
+
 function formatDate(d: string | null) {
   return d ? new Date(d).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—';
 }
@@ -18,6 +26,7 @@ function formatDate(d: string | null) {
 export default function Dashboard() {
   const [alerts, setAlerts] = useState<DeadlineAlert[]>([]);
   const [alertsLoading, setAlertsLoading] = useState(true);
+  const [savedGrants, setSavedGrants] = useState<SavedGrant[]>([]);
 
   useEffect(() => {
     apiFetch('/api/deadlines')
@@ -25,6 +34,13 @@ export default function Dashboard() {
       .then((data) => setAlerts(Array.isArray(data) ? data : []))
       .catch(() => setAlerts([]))
       .finally(() => setAlertsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    apiFetch('/api/grants/favorites')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setSavedGrants(Array.isArray(data) ? data : []))
+      .catch(() => setSavedGrants([]));
   }, []);
 
   const urgent = alerts.filter((a) => a.alert === 'overdue' || a.alert === 'due_soon');
@@ -103,6 +119,49 @@ export default function Dashboard() {
           All deadlines on track. You have {alerts.length} active application{alerts.length !== 1 ? 's' : ''} in progress.
         </p>
       ) : null}
+
+      {savedGrants.length > 0 && (
+        <section style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem', color: 'var(--color-text)' }}>
+            Saved grants
+          </h2>
+          <Link
+            to="/grants"
+            state={{ showFavorites: true }}
+            className="micro-card micro-link"
+            style={{
+              padding: '1rem 1.25rem',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius)',
+              color: 'inherit',
+              textDecoration: 'none',
+              display: 'block',
+            }}
+          >
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {savedGrants.slice(0, 5).map((g, i, arr) => (
+                <li key={g.id} style={{ padding: '0.5rem 0', borderBottom: i < arr.length - 1 ? '1px solid var(--color-border)' : undefined }}>
+                  <strong>{g.title}</strong>
+                  {g.funder && <span style={{ color: 'var(--color-text-secondary)', marginLeft: '0.5rem' }}> · {g.funder}</span>}
+                  <span style={{ display: 'block', fontSize: '0.8125rem', color: 'var(--color-text-secondary)', marginTop: '0.25rem' }}>
+                    {g.amount_max != null ? `Up to £${g.amount_max.toLocaleString()}` : '—'} · Deadline {formatDate(g.deadline)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {savedGrants.length > 5 && (
+              <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-accent-start)' }}>
+                +{savedGrants.length - 5} more · View all
+              </p>
+            )}
+            {savedGrants.length <= 5 && savedGrants.length > 0 && (
+              <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-accent-start)' }}>
+                View all saved grants →
+              </p>
+            )}
+          </Link>
+        </section>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1rem' }}>
         <Link
