@@ -48,5 +48,11 @@
 - [ ] Performance optimization
 - [ ] Full agent orchestration integration
 
+## Phase 8: Testing & Deployment
+- [ ] Vitest unit tests for core features
+- [ ] Integration tests for agent workflows
+- [ ] User acceptance testing
+- [ ] Final checkpoint and deployment
+
 ---
 _Last updated: Feb 22, 2025_
