@@ -34,5 +34,15 @@
 - [ ] Document assembly orchestration
 - [ ] PDF/Word export functionality
 
+## Phase 6: Application Tracking & Compliance
+- [x] Grant application tracker dashboard
+- [x] Submission status tracking
+- [ ] Deadline management and alerts
+- [ ] Compliance checker agent
+- [ ] Application validation before submission
+
+## Phase 7: (Next)
+_Add Phase 7 tasks here as you define them._
+
 ---
 _Last updated: Feb 22, 2025_
