@@ -16,5 +16,10 @@
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
+  "pnpm": {
+    "overrides": {
+      "tailwindcss>nanoid": "3.3.7"
+    }
+  },
   "workspaces": ["client", "server"]
 }
