@@ -1,0 +1,59 @@
+/* GrantFlow design system: humanist sans, minimal palette, generous spacing */
+:root {
+  --color-text: #1a1a1a;
+  --color-text-secondary: #5c5c5c;
+  --color-bg: #ffffff;
+  --color-border: #e5e5e5;
+  --color-accent-start: #6366f1;
+  --color-accent-end: #ec4899;
+  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --line-height-body: 1.6;
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+a {
+  color: var(--color-accent-start);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+/* Landing page */
+.landing-gradient-text {
+  background: linear-gradient(135deg, var(--color-accent-start), var(--color-accent-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.landing-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.landing-card:hover {
+  box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
