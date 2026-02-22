@@ -20,5 +20,15 @@
 - [ ] Grant matching algorithm based on CIC profile
 - [x] Grant list UI with filtering and sorting
 
+## Phase 4: Proposal Generation
+- [ ] Proposal writing agent (AI-powered)
+- [ ] Grant requirements parsing
+- [ ] Tailored proposal generation from CIC data
+- [ ] Proposal editing and review interface
+- [ ] Version history for proposals
+
+## Phase 5: (Next)
+_Add Phase 5 tasks here as you define them._
+
 ---
 _Last updated: Feb 22, 2025_
